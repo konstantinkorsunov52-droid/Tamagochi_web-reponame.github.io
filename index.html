@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Люмен — хранитель сумерек</title>
+  <meta name="description" content="Люмен — уютная игра-тамагочи о существе из света и тени. Кормите, играйте, поддерживайте равновесие и наблюдайте, как питомец эволюционирует.">
+  <meta name="theme-color" content="#0b0a18">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g'%3E%3Cstop offset='0' stop-color='%23fff3c4'/%3E%3Cstop offset='1' stop-color='%23b9a7ff'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cpath d='M32 4l6 20 20 8-20 8-6 20-6-20-20-8 20-8z' fill='url(%23g)'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="is-night">
+  <div class="aurora" aria-hidden="true"></div>
+  <div class="starfield" aria-hidden="true"></div>
+
+  <div class="app">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Люмен — на главную">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="26" height="26"><path d="M16 2l3.2 10.8L30 16l-10.8 3.2L16 30l-3.2-10.8L2 16l10.8-3.2z" fill="currentColor"/></svg>
+        </span>
+        <span class="brand-text">
+          <strong>Люмен</strong>
+          <small>хранитель сумерек</small>
+        </span>
+      </a>
+
+      <div class="topbar-meta">
+        <span class="chip phase-chip" id="phaseChip" title="Время суток влияет на питомца">
+          <span class="phase-icon" id="phaseIcon" aria-hidden="true">☾</span>
+          <span id="phaseLabel">Ночь</span>
+        </span>
+        <span class="chip sparks-chip" title="Искры — местная валюта">
+          <span aria-hidden="true">✦</span>
+          <strong id="sparksValue">30</strong>
+        </span>
+        <button class="icon-btn" id="soundBtn" type="button" aria-pressed="false" title="Звук выключен" aria-label="Включить звук">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path class="sound-wave" d="M16 8.5a5 5 0 010 7M18.5 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path class="sound-off" d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+        <button class="icon-btn" id="resetBtn" type="button" title="Начать заново" aria-label="Начать заново">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 4v6h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 10a8 8 0 113 8.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="stage-card" id="stageCard" aria-labelledby="petName">
+        <div class="stage-sky" aria-hidden="true">
+          <div class="orb" id="skyOrb"></div>
+          <div class="cloud cloud-a"></div>
+          <div class="cloud cloud-b"></div>
+          <div class="stage-stars"></div>
+        </div>
+
+        <div class="stage-topline">
+          <span class="stage-badge" id="stageBadge">Яйцо</span>
+          <span class="stage-age" id="stageAge">возраст 0 мин</span>
+        </div>
+
+        <div class="pet-wrap" id="petWrap">
+          <svg class="pet" id="pet" viewBox="0 0 240 260" role="img" aria-labelledby="petSvgTitle">
+            <title id="petSvgTitle">Люмен</title>
+            <defs>
+              <radialGradient id="bodyGrad" cx="38%" cy="28%" r="80%">
+                <stop offset="0%" stop-color="var(--pet-light)"/>
+                <stop offset="52%" stop-color="var(--pet-mid)"/>
+                <stop offset="100%" stop-color="var(--pet-dark)"/>
+              </radialGradient>
+              <radialGradient id="bellyGrad" cx="50%" cy="35%" r="70%">
+                <stop offset="0%" stop-color="rgba(255,255,255,.55)"/>
+                <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+              </radialGradient>
+              <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%">
+                <feGaussianBlur stdDeviation="7" result="blur"/>
+                <feMerge>
+                  <feMergeNode in="blur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+
+            <g id="petBody" class="pet-body">
+              <ellipse class="ground-shadow" cx="120" cy="241" rx="62" ry="11" fill="rgba(5,3,15,.42)"/>
+
+              <g class="antenna">
+                <path d="M120 52 C118 34 126 26 137 20" fill="none" stroke="var(--pet-mid)" stroke-width="4" stroke-linecap="round"/>
+                <path class="antenna-star" d="M137 8l3.4 8.6L149 20l-8.6 3.4L137 32l-3.4-8.6L125 20l8.6-3.4z" fill="var(--accent-2)" filter="url(#softGlow)"/>
+              </g>
+
+              <path class="body" d="M120 42 C176 42 207 88 207 142 C207 202 172 234 120 234 C68 234 33 202 33 142 C33 88 64 42 120 42 Z" fill="url(#bodyGrad)"/>
+              <ellipse class="belly" cx="120" cy="168" rx="50" ry="40" fill="url(#bellyGrad)"/>
+
+              <g class="arms">
+                <ellipse class="arm arm-left" cx="42" cy="160" rx="14" ry="9" fill="var(--pet-mid)" transform="rotate(-18 42 160)"/>
+                <ellipse class="arm arm-right" cx="198" cy="160" rx="14" ry="9" fill="var(--pet-mid)" transform="rotate(18 198 160)"/>
+              </g>
+
+              <g class="face">
+                <g class="eyes eyes-open">
+                  <ellipse class="eye" cx="92" cy="138" rx="9" ry="13" fill="#1b1333"/>
+                  <ellipse class="eye" cx="148" cy="138" rx="9" ry="13" fill="#1b1333"/>
+                  <circle cx="95" cy="133" r="3.2" fill="#fff"/>
+                  <circle cx="151" cy="133" r="3.2" fill="#fff"/>
+                </g>
+                <g class="eyes eyes-sleep">
+                  <path d="M82 140q10 9 20 0" fill="none" stroke="#1b1333" stroke-width="4" stroke-linecap="round"/>
+                  <path d="M138 140q10 9 20 0" fill="none" stroke="#1b1333" stroke-width="4" stroke-linecap="round"/>
+                </g>
+                <g class="eyes eyes-sad">
+                  <path d="M82 132q10-7 20 0" fill="none" stroke="#1b1333" stroke-width="4" stroke-linecap="round"/>
+                  <path d="M138 132q10-7 20 0" fill="none" stroke="#1b1333" stroke-width="4" stroke-linecap="round"/>
+                  <circle cx="92" cy="143" r="5.5" fill="#1b1333"/>
+                  <circle cx="148" cy="143" r="5.5" fill="#1b1333"/>
+                </g>
+
+                <path class="mouth mouth-happy" d="M106 166q14 12 28 0" fill="none" stroke="#1b1333" stroke-width="4" stroke-linecap="round"/>
+                <path class="mouth mouth-neutral" d="M108 168h24" fill="none" stroke="#1b1333" stroke-width="4" stroke-linecap="round"/>
+                <path class="mouth mouth-sad" d="M106 172q14-12 28 0" fill="none" stroke="#1b1333" stroke-width="4" stroke-linecap="round"/>
+
+                <ellipse class="cheek" cx="72" cy="160" rx="9" ry="5" fill="rgba(255,120,160,.35)"/>
+                <ellipse class="cheek" cx="168" cy="160" rx="9" ry="5" fill="rgba(255,120,160,.35)"/>
+              </g>
+
+              <g class="pet-sparkles" aria-hidden="true">
+                <circle cx="56" cy="96" r="2.4" fill="#fff"/>
+                <circle cx="186" cy="112" r="2" fill="#fff"/>
+                <circle cx="172" cy="212" r="1.8" fill="#fff"/>
+              </g>
+
+              <g class="sweat" aria-hidden="true">
+                <path d="M186 78c6 9 9 13 9 18a9 9 0 11-18 0c0-5 3-9 9-18z" fill="#8fe3ff" opacity=".85"/>
+              </g>
+            </g>
+
+            <g id="eggBody" class="egg-body" aria-hidden="true">
+              <ellipse class="ground-shadow" cx="120" cy="241" rx="58" ry="11" fill="rgba(5,3,15,.42)"/>
+              <path class="egg-shell" d="M120 38c40 0 66 52 66 102 0 47-29 78-66 78s-66-31-66-78c0-50 26-102 66-102z" fill="url(#bodyGrad)"/>
+              <path class="egg-crack" d="M96 128l12 8-9 12 16 8-7 14" fill="none" stroke="#1b1333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+              <path class="egg-crack egg-crack-2" d="M138 122l-7 12 11 7-6 13" fill="none" stroke="#1b1333" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+              <ellipse class="egg-glow" cx="108" cy="96" rx="24" ry="30" fill="rgba(255,255,255,.28)"/>
+              <circle class="egg-spark" cx="150" cy="86" r="3" fill="#fff"/>
+              <circle class="egg-spark" cx="84" cy="150" r="2.2" fill="#fff"/>
+            </g>
+          </svg>
+
+          <div class="pet-zzz" aria-hidden="true"><span>z</span><span>z</span><span>z</span></div>
+          <div class="evolve-flash" id="evolveFlash" aria-hidden="true"></div>
+        </div>
+
+        <div class="pet-info">
+          <h1 id="petName">Люмен</h1>
+          <p class="pet-title" id="petTitle">искра, которой ещё предстоит проснуться</p>
+          <p class="pet-mood" id="petMood">Яйцо тихо светится в темноте.</p>
+        </div>
+
+        <div class="balance-block" aria-labelledby="balanceTitle">
+          <div class="balance-head">
+            <span id="balanceTitle">Баланс света и тени</span>
+            <strong id="balanceLabel">Равновесие</strong>
+          </div>
+          <div class="balance-track" role="img" aria-label="Шкала баланса: тень слева, свет справа">
+            <div class="balance-zone"></div>
+            <div class="balance-marker" id="balanceMarker"></div>
+          </div>
+          <div class="balance-ends"><span>Тень</span><span>Свет</span></div>
+        </div>
+
+        <div class="actions" id="actions">
+          <button class="action" id="btnFeed" type="button" data-action="feed">
+            <span class="action-icon" aria-hidden="true">🍥</span>
+            <span class="action-text"><strong>Кормить</strong><small id="feedHint">Пыльца</small></span>
+            <span class="action-cd" id="cdFeed" hidden></span>
+          </button>
+          <button class="action" id="btnPlay" type="button" data-action="play">
+            <span class="action-icon" aria-hidden="true">🎾</span>
+            <span class="action-text"><strong>Играть</strong><small>Настроение</small></span>
+            <span class="action-cd" id="cdPlay" hidden></span>
+          </button>
+          <button class="action" id="btnWash" type="button" data-action="wash">
+            <span class="action-icon" aria-hidden="true">🫧</span>
+            <span class="action-text"><strong>Мыть</strong><small>Чистота</small></span>
+            <span class="action-cd" id="cdWash" hidden></span>
+          </button>
+          <button class="action" id="btnSleep" type="button" data-action="sleep">
+            <span class="action-icon" aria-hidden="true">🌙</span>
+            <span class="action-text"><strong>Спать</strong><small>Энергия</small></span>
+          </button>
+          <button class="action" id="btnHeal" type="button" data-action="heal">
+            <span class="action-icon" aria-hidden="true">💗</span>
+            <span class="action-text"><strong>Лечить</strong><small>Здоровье</small></span>
+            <span class="action-cd" id="cdHeal" hidden></span>
+          </button>
+        </div>
+
+        <button class="revive-btn" id="btnRevive" type="button" hidden>
+          <span aria-hidden="true">✦</span> Провести ритуал возвращения · 25 искр
+        </button>
+      </section>
+
+      <section class="side">
+        <div class="card stats-card">
+          <div class="card-head">
+            <h2>Состояние</h2>
+            <span class="muted" id="careHint">Ухаживайте, чтобы Люмен рос</span>
+          </div>
+          <div class="stats" id="stats">
+            <div class="stat" data-stat="satiety">
+              <div class="stat-head"><span class="stat-name"><span aria-hidden="true">🍥</span> Сытость</span><span class="stat-value" id="valSatiety">70</span></div>
+              <div class="bar"><div class="bar-fill" id="barSatiety"></div></div>
+            </div>
+            <div class="stat" data-stat="mood">
+              <div class="stat-head"><span class="stat-name"><span aria-hidden="true">💛</span> Настроение</span><span class="stat-value" id="valMood">70</span></div>
+              <div class="bar"><div class="bar-fill" id="barMood"></div></div>
+            </div>
+            <div class="stat" data-stat="energy">
+              <div class="stat-head"><span class="stat-name"><span aria-hidden="true">⚡</span> Энергия</span><span class="stat-value" id="valEnergy">80</span></div>
+              <div class="bar"><div class="bar-fill" id="barEnergy"></div></div>
+            </div>
+            <div class="stat" data-stat="purity">
+              <div class="stat-head"><span class="stat-name"><span aria-hidden="true">🫧</span> Чистота</span><span class="stat-value" id="valPurity">85</span></div>
+              <div class="bar"><div class="bar-fill" id="barPurity"></div></div>
+            </div>
+            <div class="stat" data-stat="health">
+              <div class="stat-head"><span class="stat-name"><span aria-hidden="true">❤️</span> Здоровье</span><span class="stat-value" id="valHealth">100</span></div>
+              <div class="bar"><div class="bar-fill" id="barHealth"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card tabs-card">
+          <div class="tabs" role="tablist" aria-label="Разделы игры">
+            <button class="tab is-active" id="tabShop" type="button" role="tab" aria-selected="true" aria-controls="panelShop" data-tab="shop">Лавка</button>
+            <button class="tab" id="tabGame" type="button" role="tab" aria-selected="false" aria-controls="panelGame" data-tab="game">Игра</button>
+            <button class="tab" id="tabJournal" type="button" role="tab" aria-selected="false" aria-controls="panelJournal" data-tab="journal">Дневник</button>
+            <button class="tab" id="tabHelp" type="button" role="tab" aria-selected="false" aria-controls="panelHelp" data-tab="help">Правила</button>
+          </div>
+
+          <div class="panels">
+            <section class="panel is-active" id="panelShop" role="tabpanel" aria-labelledby="tabShop">
+              <div class="panel-head">
+                <h3>Лавка искр</h3>
+                <p>Еда остаётся в сумке, забота применяется сразу.</p>
+              </div>
+              <div class="shop-grid" id="shopGrid"></div>
+            </section>
+
+            <section class="panel" id="panelGame" role="tabpanel" aria-labelledby="tabGame" hidden>
+              <div class="panel-head">
+                <h3>Звёздный дождь</h3>
+                <p>Ловите звёзды 30 секунд. Золотые склоняют к свету, лиловые — к тени.</p>
+              </div>
+              <div class="game-shell">
+                <canvas id="gameCanvas" width="640" height="360" aria-label="Мини-игра: ловите падающие звёзды"></canvas>
+                <div class="game-hud">
+                  <span>Очки: <strong id="gameScore">0</strong></span>
+                  <span>Время: <strong id="gameTime">30</strong> с</span>
+                </div>
+                <div class="game-overlay" id="gameOverlay">
+                  <div class="game-overlay-inner">
+                    <h4 id="gameOverlayTitle">Звёздный дождь</h4>
+                    <p id="gameOverlayText">Двигайте чашу мышью, пальцем или стрелками ← →.</p>
+                    <button class="btn btn-primary" id="gameStart" type="button">Начать</button>
+                  </div>
+                </div>
+              </div>
+              <p class="muted small" id="gameCooldown"></p>
+            </section>
+
+            <section class="panel" id="panelJournal" role="tabpanel" aria-labelledby="tabJournal" hidden>
+              <div class="panel-head">
+                <h3>Дневник сумерек</h3>
+                <p>Важные события сохраняются между визитами.</p>
+              </div>
+              <ol class="journal" id="journalList"></ol>
+            </section>
+
+            <section class="panel" id="panelHelp" role="tabpanel" aria-labelledby="tabHelp" hidden>
+              <div class="panel-head">
+                <h3>Как играть</h3>
+                <p>Люмен живёт по реальному времени — даже когда вкладка закрыта.</p>
+              </div>
+              <div class="help">
+                <p><strong>Свет и тень.</strong> Люмен рождается из равновесия. Еда, мытьё и звёзды сдвигают шкалу. Держите marker в центре — тогда питомец эволюционирует в сумеречную форму.</p>
+                <p><strong>Пять забот.</strong> Сытость, настроение, энергия, чистота и здоровье. Если сытость или чистота падают слишком низко, здоровье начинает убывать.</p>
+                <p><strong>Сон.</strong> Во сне энергия восстанавливается, а голод убывает медленнее. Ночью сон эффективнее.</p>
+                <p><strong>Эволюция.</strong> Каждое действие даёт опыт. На 12 опыта Люмен взрослеет, на 35 — выбирает форму по среднему балансу: сияющую, теневую или сумеречную.</p>
+                <p><strong>Искры.</strong> Их дают мини-игра и редкий звёздный дар. Тратьте на еду и заботу.</p>
+                <p><strong>Если Люмен угас.</strong> Здоровье на нуле не конец: соберите 25 искр в мини-игре и проведите ритуал возвращения. Возрождённый Люмен может стать Фениксом.</p>
+                <p class="muted small">Прогресс хранится в localStorage браузера. Офлайн-время учитывается до 8 часов и с половинной скоростью.</p>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Люмен · игра-тамагочи на чистом HTML, CSS и JavaScript</span>
+      <span class="muted">Прогресс сохраняется локально</span>
+    </footer>
+  </div>
+
+  <div class="modal-backdrop" id="nameModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="nameTitle">
+      <div class="modal-star" aria-hidden="true">✦</div>
+      <h2 id="nameTitle">Кто проснулся?</h2>
+      <p class="muted">В темноте лежит тёплое яйцо. Дайте имя тому, кто вот-вот появится.</p>
+      <label class="field">
+        <span>Имя Люмена</span>
+        <input id="nameInput" type="text" maxlength="16" autocomplete="off" placeholder="Люмен" value="Люмен">
+      </label>
+      <button class="btn btn-primary btn-wide" id="nameConfirm" type="button">Назвать</button>
+      <p class="muted small">Имя можно оставить по умолчанию.</p>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="foodModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="foodTitle">
+      <h2 id="foodTitle">Чем покормить?</h2>
+      <p class="muted">Пыльца всегда под рукой. Остальное покупается в лавке.</p>
+      <div class="food-list" id="foodList"></div>
+      <button class="btn btn-ghost btn-wide" id="foodClose" type="button">Закрыть</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="resetModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="resetTitle">
+      <h2 id="resetTitle">Начать заново?</h2>
+      <p class="muted">Текущий Люмен, искры и дневник исчезнут. Это действие нельзя отменить.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="resetCancel" type="button">Отмена</button>
+        <button class="btn btn-danger" id="resetConfirm" type="button">Сбросить</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
